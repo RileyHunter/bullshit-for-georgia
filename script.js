@@ -103,7 +103,7 @@ class Rat extends Entity {
 class Floor extends Entity {
     static spritePath = 'https://i.imgur.com/v6haglM.png';
     constructor() {
-        super(.5, .9, 0);
+        super(.5, .8, 0);
     }
 }
 
