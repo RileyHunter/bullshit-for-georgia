@@ -67,8 +67,9 @@ class Entity {
 
 class Pipe extends Entity {
     static spritePath = 'https://i.imgur.com/OtysgCb.png';
-    constructor(x, y) {
+    constructor(x, y, collisionHandler) {
         super(x, y, 3);
+        this.collisionHandler = collisionHandler;
         this.canCollide = true;
     }
 
@@ -78,8 +79,7 @@ class Pipe extends Entity {
         } else if (this.canCollide && this.y >= .9 && this.x >= .3 && this.x <= .7) {
             this.canCollide = false;
             this.vy = -.5;
-            var audio = new Audio('https://us-tuna-sounds-files.voicemod.net/ade71f0d-a41b-4e3a-8097-9f1cc585745c-1646035604239.mp3');
-            audio.play();
+            this.collisionHandler();
         } else if (this.y > 2) {
             this.active = false;
         } else {
@@ -124,8 +124,14 @@ async function main(container) {
     onResizeHandler();
     container.onresize = onResizeHandler;
 
+    let collisionHandler = () => {
+        var audio = new Audio('https://us-tuna-sounds-files.voicemod.net/ade71f0d-a41b-4e3a-8097-9f1cc585745c-1646035604239.mp3');
+        audio.play();
+        floor.y += .01;
+    }
+
     let onClickHandler = () => {
-        game.spawn(Pipe, rat.x, rat.y);
+        game.spawn(Pipe, rat.x, rat.y, collisionHandler);
     }
     container.onclick = onClickHandler;
 
@@ -134,7 +140,7 @@ async function main(container) {
     function mainLoop() {
         game.render(context);
         game.update();
-        setTimeout(mainLoop, 10);
+        setTimeout(mainLoop, 0);
     }
 
     container.appendChild(canvas);
