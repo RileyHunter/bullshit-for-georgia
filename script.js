@@ -67,8 +67,9 @@ class Entity {
 
 class Pipe extends Entity {
     static spritePath = 'https://i.imgur.com/OtysgCb.png';
-    constructor(x, y, collisionHandler) {
+    constructor(x, y, checkCollision, collisionHandler) {
         super(x, y, 3);
+        this.checkCollision = checkCollision;
         this.collisionHandler = collisionHandler;
         this.canCollide = true;
     }
@@ -76,7 +77,7 @@ class Pipe extends Entity {
     update(game) {
         if (!this.active) {
             return;
-        } else if (this.canCollide && this.y >= .9 && this.x >= .3 && this.x <= .7) {
+        } else if (this.canCollide && this.checkCollision(this.x, this.y)) {
             this.canCollide = false;
             this.vy = -.5;
             this.collisionHandler();
@@ -124,6 +125,10 @@ async function main(container) {
     onResizeHandler();
     container.onresize = onResizeHandler;
 
+    let checkCollision = (x, y) => {
+        return y >= floor.y && x >= floor.x - .2 && x <= floor.x + .2;
+    }
+
     let collisionHandler = () => {
         var audio = new Audio('https://us-tuna-sounds-files.voicemod.net/ade71f0d-a41b-4e3a-8097-9f1cc585745c-1646035604239.mp3');
         audio.play();
@@ -131,7 +136,7 @@ async function main(container) {
     }
 
     let onClickHandler = () => {
-        game.spawn(Pipe, rat.x, rat.y, collisionHandler);
+        game.spawn(Pipe, rat.x, rat.y, checkCollision, collisionHandler);
     }
     container.onclick = onClickHandler;
 
